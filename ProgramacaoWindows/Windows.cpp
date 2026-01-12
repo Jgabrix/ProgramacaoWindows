@@ -73,9 +73,9 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 LRESULT CALLBACK WinProc(HWND hwnd, UINT mesagem , WPARAM wParam, LPARAM lParam)
 {
-	HDC hdc;
-	RECT rect;
-	PAINTSTRUCT ps;
+	HDC hdc;			//Pincel Virtual
+	RECT rect;			//Defini a area do retangulo
+	PAINTSTRUCT ps;		//Operacoes
 
 	//Definir os tipos de eventos
 	switch (mesagem)
