@@ -1,5 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <windowsx.h> // funcoes extras
+#include "Resources.h"
 
 //Window Procedure
 LRESULT CALLBACK WinProc(HWND, UINT, WPARAM, LPARAM);
@@ -21,9 +23,9 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = hInstance;
-	wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
+	wndclass.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR));
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = "BasicWindow";
 
@@ -38,20 +40,58 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		return 0;
 	}
 
+	//Tamanho da janela igual ao tamanho da tela
+	int windowWidth = 960; //x
+	int windowHeigth = 540;//y
+
+
+	//Centralizar a janela na tela
+	int windowPosX = GetSystemMetrics(SM_CXSCREEN) / 2 - windowWidth / 2;
+	int windowPosY = GetSystemMetrics(SM_CYSCREEN) / 2 - windowHeigth / 2;
+
+
+
 	//Criacao da janela baseada na window class
-	hwnd = CreateWindow(
+	hwnd = CreateWindowEx(
+		NULL,
 		"BasicWindow",
 		"Aplicação",
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		WS_OVERLAPPED | WS_SYSMENU,
+		windowPosX,
+		windowPosY,
+		windowWidth,
+		windowHeigth,
 		NULL,
 		NULL,
 		hInstance,
 		NULL);
 
+
+	//Retangulo com o tamanho da area cliente
+	RECT winRect = { 0, 0, windowWidth, windowHeigth };
+
+
+	//Ajuste do tamanho da janela
+	AdjustWindowRectEx(
+		&winRect,
+		GetWindowStyle(hwnd),
+		GetMenu(hwnd) != NULL,
+		GetWindowExStyle(hwnd)
+	);
+
+	//Centralizar a janela
+	windowPosX = (GetSystemMetrics(SM_CXSCREEN) / 2 ) - ( (winRect.right - winRect.left) / 2);
+	windowPosY = (GetSystemMetrics(SM_CYSCREEN) / 2) - ((winRect.bottom - winRect.top) / 2);
+
+
+	//Redimensiona a janela
+	MoveWindow(
+		hwnd,
+		windowPosX,
+		windowPosY,
+		winRect.right - winRect.left,
+		winRect.bottom - winRect.top,
+		TRUE);
 
 	//Exibicao da janela
 	ShowWindow(hwnd, nCmdShow);
